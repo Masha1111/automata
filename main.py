@@ -30,6 +30,7 @@ def get_word():
         path = find_path(i, cycles)
         possible_words = make_words(path)
         check_words(possible_words, path)
+        a = 5
 
 
 def find_path(use_cycles, pattern):
