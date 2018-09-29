@@ -34,25 +34,32 @@ def get_word():
 
 def find_path(use_cycles, pattern):
     """pattern в двоичном виде для одного шага
-    use_cycles: [0, 2, ...], где element - количество пробегов по циклу"""
+    use_cycles: [0, 2, ...], где element - количество пробегов по циклу
+    cycles1 = [(0,), (3, 2, 1), (4, 3, 2), (5, 4), (6, 5), (8, 7, 6), (9, 8, 7), (9,)]"""
     global automat
-    global cycles1
-    global cycles2
-    global cycles3
+    global cycles
     last_node = automat[-1]
     last_node_number = len(automat) - 1
-    path = [last_node_number]
+    path = []
     using = []
-    label = len(pattern) - 1
+    # cycle_label = len(pattern) - 1
     for i in range(len(pattern)):
         using.append(pattern[i] + use_cycles[i])
     while True:
-        if using[label] == 0:
+        # if using[cycle_label] == 0:
+        for i in range(len(using)):
+            if cycles[0][i][0] == last_node_number and using[i] > 0:
+                for c in range(using[i]):
+                    for node in cycles[0][i]:
+                        path.append(node)
+                        path.append(last_node_number)
+                path.append(list(last_node.keys())[0])
+                last_node = automat[automat[last_node_number][0]]
+                last_node_number = automat[last_node_number][0]
+        else:
             path.append(last_node_number)
             last_node = automat[automat[last_node_number][0]]
             last_node_number = automat[last_node_number][0]
-        else:
-            pass
     # for i in range(max_length - len(automat)):
     # while True:
     #     keys = list(last_node.keys())
@@ -140,13 +147,12 @@ def search_words(list_changes, words):
 def main():
     with open("k3.txt") as file:
         global automat
-        global cycles1
-        global cycles2
-        global cycles3
-        cycles1 = [(0,), (1, 3, 2), (3, 2, 4), (4, 5), (5, 6), (8, 7, 6), (8, 7, 9), (9,)]
-        cycles2 = [(0,), (1, 3, 2), (3, 2, 4), (4, 5), (5, 6), (8, 7, 6), (8, 7, 9), (11, 10, 9), (11, 10, 12), (12,)]
-        cycles3 = [(0,), (1, 3, 2), (3, 2, 4), (4, 5), (5, 6), (8, 7, 6), (8, 7, 9), (11, 10, 9), (11, 10, 12),
-                   (14, 13, 12),(14, 13, 15), (15,)]
+        global cycles
+        cycles1 = [(0,), (3, 2, 1), (4, 3, 2), (5, 4), (6, 5), (8, 7, 6), (9, 8, 7), (9,)]
+        cycles2 = [(0,), (3, 2, 1), (4, 3, 2), (5, 4), (6, 5), (8, 7, 6), (9, 8, 7), (11, 10, 9), (12, 11, 10), (12,)]
+        cycles3 = [(0,), (3, 2, 1), (4, 3, 2), (5, 4), (6, 5), (8, 7, 6), (9, 8, 7), (11, 10, 9), (12, 11, 10),
+                   (14, 13, 12), (15, 14, 13), (15,)]
+        cycles = [cycles1, cycles2, cycles3]
         get_automat(file)
         a = automat
         print(a)
