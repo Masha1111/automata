@@ -42,34 +42,42 @@ def find_path(use_cycles, pattern):
     last_node_number = len(automat) - 1
     path = []
     using = []
-    # cycle_label = len(pattern) - 1
-    for i in range(len(pattern)):
-        using.append(pattern[i] + use_cycles[i])
-    while True:
-        # if using[cycle_label] == 0:
-        for i in range(len(using)):
+    for j in range(len(pattern)):
+        using.append(int(pattern[j]) + use_cycles[j])
+    for k in range(len(automat)):
+        for i in range(len(using) - 1, 0, -1):
             if cycles[0][i][0] == last_node_number and using[i] > 0:
                 for c in range(using[i]):
                     for node in cycles[0][i]:
                         path.append(node)
                         path.append(last_node_number)
                 path.append(list(last_node.keys())[0])
-                last_node = automat[automat[last_node_number][0]]
-                last_node_number = automat[last_node_number][0]
-        else:
-            path.append(last_node_number)
-            last_node = automat[automat[last_node_number][0]]
-            last_node_number = automat[last_node_number][0]
-    # for i in range(max_length - len(automat)):
+                last_node = automat[list(automat[last_node_number].keys())[0]]
+                last_node_number = list(automat[last_node_number].keys())[0]
+            else:
+                path.append(last_node_number)
+                last_node = automat[list(automat[last_node_number].keys())[0]]
+                last_node_number = list(automat[last_node_number].keys())[0]
+            if last_node_number == 0 and last_node_number in path:
+                break
+        break
     # while True:
-    #     keys = list(last_node.keys())
-    #     for key in keys:
-    #         if key != last_node_number and key not in path:
-    #             path.append(key)
-    #             last_node = automat[key]
-    #             last_node_number = key
-    #     if 0 in path:
-    #         break
+    #     for i in range(len(using)):
+    #         if cycles[0][i][0] == last_node_number and using[i] > 0:
+    #             for c in range(using[i]):
+    #                 for node in cycles[0][i]:
+    #                     path.append(node)
+    #                     path.append(last_node_number)
+    #             path.append(list(last_node.keys())[0])
+    #             last_node = automat[list(automat[last_node_number].keys())[0]]
+    #             last_node_number = list(automat[last_node_number].keys())[0]
+    #         else:
+    #             path.append(last_node_number)
+    #             last_node = automat[list(automat[last_node_number].keys())[0]]
+    #             last_node_number = list(automat[last_node_number].keys())[0]
+    #         if last_node_number == 0 and last_node_number in path:
+    #             break
+    #     break
     return path
 
 
@@ -155,7 +163,8 @@ def main():
         cycles = [cycles1, cycles2, cycles3]
         get_automat(file)
         a = automat
-        print(a)
+        res = find_path([0, 0, 0, 0, 0, 0, 0, 0], '00000000')
+        print(res)
         #get_word()
 
 
