@@ -36,7 +36,7 @@ def get_word():
             pat = make_pattern_for_step(0, len(cycles[0]))
             possible_path = find_path(list_using_cycles, pat)
             possible_words = make_words(possible_path)
-            result = check_words(possible_words)
+            result = check(possible_words)
 
 
 def make_list_using_cycles():
@@ -70,10 +70,18 @@ def find_path(use_cycles, pattern):
     return path
 
 
-def check_words(words):
+def check(words):
     global automat
-    a = automat
-    current_node = len(automat) - 2
+    for node in range(len(automat) - 2):
+        answer = check_words(node, words)
+        if not answer:
+            return False
+    return True
+
+
+def check_words(current_n, words):
+    global automat
+    current_node = current_n
     step_done = False
     for word in words:
         for letter in word:
@@ -88,6 +96,8 @@ def check_words(words):
                 step_done = False
             else:
                 return False
+    if current_node != 0:
+        return False
     return True
 
 
