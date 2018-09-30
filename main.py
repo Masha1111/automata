@@ -24,12 +24,23 @@ def make_pattern_for_step(step_number, len_pattern):
 
 def get_word():
     global automat
-    cycles = make_list_cycles(len(automat))
-    max_length = (len(automat) - 1) ** 2
-    for i in range(max_length - len(automat)):
-        path = find_path(i, cycles)
-        possible_words = make_words(path)
-        check_words(possible_words, path)
+    global cycles
+    max_length_word = (len(automat) - 1) ** 2
+    # for i in range(max_length_word - len(automat)):
+    #     path = find_path(i, cycles)
+    #     possible_words = make_words(path)
+    #     check_words(possible_words, path)
+    for i in range(max_length_word - len(automat)):
+        list_using_cycles = [0, 0, 0, 0, 0, 0, 0, 0]
+        for k in range(len(cycles[0])):
+            pat = make_pattern_for_step(0, len(cycles[0]))
+            possible_path = find_path(list_using_cycles, pat)
+            possible_words = make_words(possible_path)
+            result = check_words(possible_words)
+
+
+def make_list_using_cycles():
+    pass
 
 
 def find_path(use_cycles, pattern):
@@ -59,21 +70,25 @@ def find_path(use_cycles, pattern):
     return path
 
 
-def check_words(words, path):
+def check_words(words):
     global automat
+    a = automat
+    current_node = len(automat) - 2
+    step_done = False
     for word in words:
-        for node in range(len(automat) - 2, 1, -1):
-            current_node = node
+        for letter in word:
             next_node = None
-            for letter in word:
-                tuples = list(automat[current_node].items())
-                for tup in tuples:
-                    if tup[1] == letter:
-                        next_node = tup[0]
-                if next_node is not None:
-                    current_node = next_node
-                else:
-                    break
+            tuples = list(automat[current_node].items())
+            for tup in tuples:
+                if letter in tup[1]:
+                    next_node = tup[0]
+                    step_done = True
+            if next_node is not None and step_done:
+                current_node = next_node
+                step_done = False
+            else:
+                return False
+    return True
 
 
 def make_list_cycles(length):
@@ -94,8 +109,8 @@ def make_words(path):
         next_node_number = path[i + 1]
         value = automat[current_node][next_node_number]
         letters = []
-        for value in value:
-            for letter in value:
+        for val in value:
+            for letter in val:
                 letters += letter
         if len(letters) > 1:
             change[index] = letters[1]
@@ -140,11 +155,12 @@ def main():
                    (14, 13, 12), (15, 14, 13), (15,)]
         cycles = [cycles1, cycles2, cycles3]
         get_automat(file)
-        a = automat
-        res = find_path([1, 0, 0, 0, 0, 0, 0, 0], '00000000')
-        words = make_words(res)
-        print(words)
-        #get_word()
+        # path = find_path([0, 0, 0, 0, 0, 0, 0, 0], '00000000')
+        # words = make_words(path)
+        # print(words)
+        check_words(['aababaaba', 'aabababba', 'abbabaaba', 'abbababba'])
+        # print(automat)
+        # get_word()
 
 
 if __name__ == "__main__":
