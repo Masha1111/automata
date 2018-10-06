@@ -1,3 +1,18 @@
+import sys
+
+
+def convert_base(num, to_base=16, from_base=10):
+    if isinstance(num, str):
+        n = int(num, from_base)
+    else:
+        n = int(num)
+    alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    if n < to_base:
+        return alphabet[n]
+    else:
+        return convert_base(n // to_base, to_base) + alphabet[n % to_base]
+
+
 def get_automat(data):
     count = int(data.readline())
     global automat
@@ -25,22 +40,50 @@ def make_pattern_for_step(step_number, len_pattern):
 def get_word():
     global automat
     global cycles
+    step = -1
     max_length_word = (len(automat) - 1) ** 2
     # for i in range(max_length_word - len(automat)):
     #     path = find_path(i, cycles)
     #     possible_words = make_words(path)
     #     check_words(possible_words, path)
-    for i in range(max_length_word - len(automat)):
-        list_using_cycles = [0, 0, 0, 0, 0, 0, 0, 0]
-        for k in range(len(cycles[0])):
-            pat = make_pattern_for_step(0, len(cycles[0]))
-            possible_path = find_path(list_using_cycles, pat)
+
+    # for i in range(max_length_word - len(automat)):
+    #     list_using_cycles = [0, 0, 0, 0, 0, 0, 0, 0]
+    #     for k in range(len(cycles[0])):
+    #         pat = make_pattern_for_step(0, len(cycles[0]))
+    #         possible_path = find_path(list_using_cycles, pat)
+    #         possible_words = make_words(possible_path)
+    #         result = check(possible_words)
+    while True:
+        step += 1
+        list_using_cycles = pattern_using_cycles(step, len(cycles[0]))
+        pat = make_pattern_for_step(step, len(cycles[0]))
+        possible_path = find_path(list_using_cycles, pat)
+        if len(possible_path) > max_length_word:
+            sys.exit("Word does not exist")
+        else:
             possible_words = make_words(possible_path)
             result = check(possible_words)
+            if result:
+                sys.exit(result)
+            else:
+                continue
 
 
-def make_list_using_cycles():
-    pass
+def pattern_using_cycles(step_number, lenght_pattern):
+    # for i in range(1, 2 ** lenght_pattern):
+    #     number = bin(step_number)[2:]
+    #     pattern = ''
+    #     for j in range(lenght_pattern - len(number)):
+    #         pattern += '0'
+    #     pattern += number
+    hex_num = str(convert_base(step_number))
+    pattern = []
+    for i in range(lenght_pattern - len(hex_num)):
+        pattern.append(0)
+    for j in range(len(hex_num)):
+        pattern.append(hex_num[j])
+    return pattern
 
 
 def find_path(use_cycles, pattern):
@@ -87,7 +130,6 @@ def check_words(current_n, words):
     possible_answer = []
     for word in words:
         current_node = current_n
-        # for letter in word:
         for i in range(len(word)):
             next_node = None
             tuples = list(automat[current_node].items())
@@ -104,13 +146,6 @@ def check_words(current_n, words):
         return False
     else:
         return possible_answer
-
-
-def make_list_cycles(length):
-    pattern = []
-    for i in range(length):
-        pattern.append((0, False))
-    return pattern
 
 
 def make_words(path):
