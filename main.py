@@ -76,30 +76,39 @@ def check(words):
         answer = check_words(node, words)
         if not answer:
             return False
-    return True
+    return answer
 
 
 def check_words(current_n, words):
     global automat
-    current_node = current_n
+    a = automat
     step_done = False
+    possible_answer = []
     for word in words:
-        for letter in word:
+        current_node = current_n
+        # for letter in word:
+        for i in range(len(word)):
             next_node = None
             tuples = list(automat[current_node].items())
             for tup in tuples:
-                if letter in tup[1]:
+                if word[i] in tup[1]:
                     next_node = tup[0]
                     step_done = True
             if next_node is not None and step_done:
                 current_node = next_node
                 step_done = False
-            else:
-                return False
-    if current_node != 0:
+            if i == len(word) - 1 and current_node == 0:
+                possible_answer.append(word)
+            # else:
+            #     return False
+                # continue
+    # if current_node != 0:
+    #     return False
+    # return True
+    if not possible_answer:
         return False
-    return True
-
+    else:
+        return possible_answer
 
 def make_list_cycles(length):
     pattern = []
@@ -168,7 +177,7 @@ def main():
         # path = find_path([0, 0, 0, 0, 0, 0, 0, 0], '00000000')
         # words = make_words(path)
         # print(words)
-        check_words(['aababaaba', 'aabababba', 'abbabaaba', 'abbababba'])
+        print(check_words(8, ['aababaaba', 'aabababba', 'abbabaaba', 'abbababba']))
         # print(automat)
         # get_word()
 
