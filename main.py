@@ -70,18 +70,19 @@ def find_path(use_cycles, pattern):
     return path
 
 
-def check(words):
+def check(alist_words):
     global automat
+    words = alist_words
     for node in range(len(automat) - 2):
         answer = check_words(node, words)
         if not answer:
             return False
-    return answer
+        words = answer
+    return words
 
 
 def check_words(current_n, words):
     global automat
-    a = automat
     step_done = False
     possible_answer = []
     for word in words:
@@ -99,16 +100,11 @@ def check_words(current_n, words):
                 step_done = False
             if i == len(word) - 1 and current_node == 0:
                 possible_answer.append(word)
-            # else:
-            #     return False
-                # continue
-    # if current_node != 0:
-    #     return False
-    # return True
     if not possible_answer:
         return False
     else:
         return possible_answer
+
 
 def make_list_cycles(length):
     pattern = []
@@ -177,7 +173,7 @@ def main():
         # path = find_path([0, 0, 0, 0, 0, 0, 0, 0], '00000000')
         # words = make_words(path)
         # print(words)
-        print(check_words(8, ['aababaaba', 'aabababba', 'abbabaaba', 'abbababba']))
+        print(check(['aababaaba', 'aabababba', 'abbabaaba', 'abbababba']))
         # print(automat)
         # get_word()
 
