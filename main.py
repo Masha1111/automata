@@ -43,29 +43,37 @@ def cycle_for_length_calculation(b, pat_len):
     return int(future_num)
 
 
+def calculate_lenght(len_pattern, basis):
+    result = 0
+    for q in range(len_pattern + 1):
+        result += basis ** q
+    return result
+
+
 def get_word():
     global automat
     global cycles
     # step = -1
     max_length_word = (len(automat) - 1) ** 2
+    step_pattern_len = calculate_lenght(len(cycles[0]), 2)
     for base in range(2, 9):
         # step += 1
         step = -1
-        for_range = cycle_for_length_calculation(base, len(cycles[0]))
+        # for_range = cycle_for_length_calculation(base, len(cycles[0]))
+        for_range = calculate_lenght(len(cycles[0]), base)
         for i in range(for_range):
             step += 1
             list_using_cycles = pattern_using_cycles(step, len(cycles[0]), base)
-            pat = make_pattern_for_step(step, len(cycles[0]))
-            possible_path = find_path(list_using_cycles, pat)
-            if len(possible_path) > max_length_word:
-                sys.exit("Word does not exist")
-            else:
-                possible_words = make_words(possible_path)
-                result = check(possible_words)
-                if result:
-                    sys.exit(result)
+            for substep in range(step_pattern_len):
+                pat = make_pattern_for_step(substep, len(cycles[0]))
+                possible_path = find_path(list_using_cycles, pat)
+                if len(possible_path) > max_length_word:
+                    sys.exit("Word does not exist")
                 else:
-                    continue
+                    possible_words = make_words(possible_path)
+                    result = check(possible_words)
+                    if result:
+                        sys.exit(result)
 
 
 def pattern_using_cycles(step_number, lenght_pattern, base):
@@ -87,7 +95,12 @@ def find_path(use_cycles, pattern):
     path = []
     using = []
     for j in range(len(pattern)):
-        using.append(int(pattern[j]) + use_cycles[j])
+        try:
+            using.append(int(pattern[j]) + use_cycles[j])
+        except:
+            print(use_cycles)
+            print(pattern)
+            sys.exit()
     for last_node_number in range(len(automat) - 1, -1, -1):
         for i in range(len(using) - 1, -1, -1):
             '''добавление цикла'''
