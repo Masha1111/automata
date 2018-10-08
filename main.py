@@ -97,10 +97,10 @@ def get_word():
     global cycles
     max_length_word = (len(automat) - 1) ** 2
     step = -1
-    max_number_pattern = calculate_lenght(len(cycles[0]), 2)
+    max_number_pattern = calculate_lenght(len(cycles[1]), 2)
     while True:
         step += 1
-        list_using_cycles = make_list_using_cycles(step, len(cycles[0]))
+        list_using_cycles = make_list_using_cycles(step, len(cycles[1]))
         for us_cycles in list_using_cycles:
             '''нафига паттерн?'''
             possible_path = find_path(us_cycles)
@@ -157,9 +157,9 @@ def find_path(use_cycles):
     for last_node_number in range(len(automat) - 1, -1, -1):
         for i in range(len(use_cycles) - 1, -1, -1):
             '''добавление цикла'''
-            if cycles[0][i][0] == last_node_number and use_cycles[i] > 0:
+            if cycles[1][i][0] == last_node_number and use_cycles[i] > 0:
                 for c in range(use_cycles[i]):
-                    for node in cycles[0][i]:
+                    for node in cycles[1][i]:
                         path.append(node)
                 path.append(last_node_number)
 
@@ -211,7 +211,7 @@ def find_path(use_cycles):
 def check(alist_words):
     global automat
     words = alist_words
-    for node in range(len(automat) - 2):
+    for node in range(len(automat) - 1):
         answer = check_words(node, words)
         if not answer:
             return False
@@ -291,7 +291,7 @@ def search_words(list_changes, words):
 
 
 def main():
-    with open("k3.txt") as file:
+    with open("k4.txt") as file:
         global automat
         global cycles
         cycles1 = [(0,), (3, 2, 1), (4, 3, 2), (5, 4), (6, 5), (8, 7, 6), (9, 8, 7), (9,)]
@@ -300,10 +300,8 @@ def main():
                    (14, 13, 12), (15, 14, 13), (15,)]
         cycles = [cycles1, cycles2, cycles3]
         get_automat(file)
-        # get_word()
-        word = ['babaabaabbababbbabbabbbbbabbaba']
-        answer = check_words(1, word)
-        print(answer)
+        get_word()
+
 
 if __name__ == "__main__":
     main()
