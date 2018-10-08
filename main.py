@@ -51,27 +51,45 @@ def calculate_lenght(len_pattern, basis):
     return result
 
 
-def dec(terms, sum, k, i):
-    if sum < 0:
+def dec(a, summ, k, i, result):
+    if summ < 0:
         return
-    if sum == 0:
+    if summ == 0:
+        ar = []
         for j in range(0, i):
-            print(terms[j])
+            ar.append(a[j])
+        result.append(ar)
     else:
-        if sum - k >= 0:
-            terms[i] = k
-            dec(terms, sum - k, k, i + 1)
+        if summ - k >= 0:
+            a[i] = k
+            dec(a, summ - k, k, i + 1, result)
         if k - 1 > 0:
-            dec(terms, sum, k - 1, i)
+            dec(a, summ, k - 1, i, result)
     return
 
 
 def make_list_using_cycles(step_number, len_list):
+    list_using_cycles = []
     result = []
-    res = []
-    terms = []
-
-    return result
+    zero_array = []
+    for i in range(step_number):
+        zero_array.append(0)
+    dec(zero_array, step_number, step_number, 0, result)
+    result = result[::-1]
+    for element in result:
+        temp_list = []
+        step_decomposition = []
+        amount = 0
+        for num in element:
+            if amount + num <= step_number:
+                amount += num
+                step_decomposition.append(num)
+        for q in range(len_list - len(step_decomposition)):
+            step_decomposition.append(0)
+        temp_list.append([x for x in itertools.permutations(step_decomposition)])
+        for tup in temp_list[0]:
+            list_using_cycles.append(tup)
+    return list(set(list_using_cycles))
 
 
 def get_word():
@@ -84,7 +102,7 @@ def get_word():
         step += 1
         list_using_cycles = make_list_using_cycles(step, len(cycles[0]))
         for us_cycles in list_using_cycles:
-             for step in range(max_number_pattern):
+            for step in range(max_number_pattern):
                 pat = make_pattern_for_step(step, len(cycles[0]))
                 possible_path = find_path(us_cycles, pat)
                 if len(possible_path) > max_length_word:
