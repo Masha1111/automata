@@ -43,7 +43,6 @@ def dec(a, summ, k, i, result):
 
 
 def make_list_using_cycles(step_number, len_list):
-    list_using_cycles = []
     result = []
     zero_array = []
     for i in range(step_number):
@@ -51,19 +50,42 @@ def make_list_using_cycles(step_number, len_list):
     dec(zero_array, step_number, step_number, 0, result)
     result = result[::-1]
     for element in result:
-        temp_list = []
         step_decomposition = []
         amount = 0
-        for num in element:
-            if amount + num <= step_number:
-                amount += num
-                step_decomposition.append(num)
-        for q in range(len_list - len(step_decomposition)):
-            step_decomposition.append(0)
-        temp_list.append([x for x in itertools.permutations(step_decomposition)])
-        for tup in temp_list[0]:
-            list_using_cycles.append(tup)
-    return list(set(list_using_cycles))
+        count = 0
+        for e in element:
+            if e != 0:
+                count += 1
+        if count <= len_list:
+            for num in element:
+                if amount + num <= step_number:
+                    amount += num
+                    step_decomposition.append(num)
+            for q in range(len_list - len(step_decomposition)):
+                step_decomposition.append(0)
+            yield itertools.permutations((step_decomposition))
+# def make_list_using_cycles(step_number, len_list):
+#     list_using_cycles = []
+#     result = []
+#     zero_array = []
+#     for i in range(step_number):
+#         zero_array.append(0)
+#     dec(zero_array, step_number, step_number, 0, result)
+#     result = result[::-1]
+#     for element in result:
+#         temp_list = []
+#         step_decomposition = []
+#         amount = 0
+#         for num in element:
+#             if amount + num <= step_number:
+#                 amount += num
+#                 step_decomposition.append(num)
+#         for q in range(len_list - len(step_decomposition)):
+#             step_decomposition.append(0)
+#         temp_list.append([x for x in itertools.permutations(step_decomposition)])
+#         for tup in temp_list[0]:
+#             list_using_cycles.append(tup)
+#     return list(set(list_using_cycles))
 
 
 def get_word():
@@ -73,17 +95,45 @@ def get_word():
     step = -1
     while True:
         step += 1
-        list_using_cycles = make_list_using_cycles(step, len(cycles[1]))
-        for us_cycles in list_using_cycles:
-            '''нафига паттерн?'''
-            possible_path = find_path(us_cycles)
-            if len(possible_path) > max_length_word:
-                sys.exit("Word does not exist")
-            else:
-                possible_words = make_words(possible_path)
-                result = check(possible_words)
-                if result:
-                    sys.exit(result)
+        list_using_cycles = make_list_using_cycles(step, len(cycles[0]))
+        for generator in list_using_cycles:
+            for us_cycles in generator:
+                possible_path = find_path(us_cycles)
+                if len(possible_path) > max_length_word:
+                    sys.exit("Word does not exist")
+                else:
+                    possible_words = make_words(possible_path)
+                    result = check(possible_words)
+                    if result:
+                        sys.exit(result)
+
+        '''a = make_list_using_cycles(34, len(cycles2))
+        for el in a:
+            last = []
+            for e in el:
+                if e not in last:
+                    last.append(e)
+                    if len(last) > 1000:
+                        last.pop(0)
+                    print(e)'''
+# def get_word():
+#     global get_automat
+#     global cycles
+#     max_length_word = (len(automat) - 1) ** 2
+#     step = -1
+#     while True:
+#         step += 1
+#         list_using_cycles = make_list_using_cycles(step, len(cycles[1]))
+#         for us_cycles in list_using_cycles:
+#             '''нафига паттерн?'''
+#             possible_path = find_path(us_cycles)
+#             if len(possible_path) > max_length_word:
+#                 sys.exit("Word does not exist")
+#             else:
+#                 possible_words = make_words(possible_path)
+#                 result = check(possible_words)
+#                 if result:
+#                     sys.exit(result)
 
 
 def find_path(use_cycles):
@@ -93,9 +143,9 @@ def find_path(use_cycles):
     for last_node_number in range(len(automat) - 1, -1, -1):
         for i in range(len(use_cycles) - 1, -1, -1):
             '''добавление цикла'''
-            if cycles[1][i][0] == last_node_number and use_cycles[i] > 0:
+            if cycles[0][i][0] == last_node_number and use_cycles[i] > 0:
                 for c in range(use_cycles[i]):
-                    for node in cycles[1][i]:
+                    for node in cycles[0][i]:
                         path.append(node)
                 path.append(last_node_number)
 
@@ -190,7 +240,7 @@ def search_words(list_changes, words):
 
 
 def main():
-    with open("k4.txt") as file:
+    with open("k3.txt") as file:
         global automat
         global cycles
         cycles1 = [(0,), (3, 2, 1), (4, 3, 2), (5, 4), (6, 5), (8, 7, 6), (9, 8, 7), (9,)]
