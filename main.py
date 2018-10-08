@@ -2,18 +2,6 @@ import sys
 import itertools
 
 
-def convert_base(num, to_base, from_base=10):
-    if isinstance(num, str):
-        n = int(num, from_base)
-    else:
-        n = int(num)
-    alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    if n < to_base:
-        return alphabet[n]
-    else:
-        return convert_base(n // to_base, to_base) + alphabet[n % to_base]
-
-
 def get_automat(data):
     count = int(data.readline())
     global automat
@@ -35,20 +23,6 @@ def make_pattern_for_step(step_number, len_pattern):
         pattern += '0'
     pattern += number
     return pattern
-
-
-def cycle_for_length_calculation(b, pat_len):
-    future_num = ''
-    for q in range(pat_len):
-        future_num += str(b - 1)
-    return int(future_num)
-
-
-def calculate_lenght(len_pattern, basis):
-    result = 0
-    for q in range(len_pattern):
-        result += basis ** q
-    return result
 
 
 def dec(a, summ, k, i, result):
@@ -97,7 +71,6 @@ def get_word():
     global cycles
     max_length_word = (len(automat) - 1) ** 2
     step = -1
-    max_number_pattern = calculate_lenght(len(cycles[1]), 2)
     while True:
         step += 1
         list_using_cycles = make_list_using_cycles(step, len(cycles[1]))
@@ -112,45 +85,8 @@ def get_word():
                 if result:
                     sys.exit(result)
 
-            # for step in range(max_number_pattern):
-            #     pat = make_pattern_for_step(step, len(cycles[0]))
-            #     possible_path = find_path(us_cycles, pat)
-            #     if len(possible_path) > max_length_word:
-            #         sys.exit("Word does not exist")
-            #     else:
-            #         possible_words = make_words(possible_path)
-            #         result = check(possible_words)
-            #         if result:
-            #             sys.exit(result)
-
-# def get_word():
-#     global automat
-#     global cycles
-#     max_length_word = (len(automat) - 1) ** 2
-#     step_pattern_len = calculate_lenght(len(cycles[0]), 2)
-#     for base in range(2, 9):
-#         step = -1
-#         for_range = calculate_lenght(len(cycles[0]), base)
-#         for i in range(for_range):
-#             step += 1
-#             # list_using_cycles = pattern_using_cycles(step, len(cycles[0]), base)
-#             list_using_cycles_for_step = make_list_using_cycles()
-#             for substep in range(step_pattern_len):
-#                 pat = make_pattern_for_step(substep, len(cycles[0]))
-#                 possible_path = find_path(list_using_cycles, pat)
-#                 if len(possible_path) > max_length_word:
-#                     sys.exit("Word does not exist")
-#                 else:
-#                     possible_words = make_words(possible_path)
-#                     result = check(possible_words)
-#                     if result:
-#                         sys.exit(result)
-
 
 def find_path(use_cycles):
-    """без паттерна
-    use_cycles: [0, 2, ...], где element - количество пробегов по циклу
-    cycles1 = [(0,), (3, 2, 1), (4, 3, 2), (5, 4), (6, 5), (8, 7, 6), (9, 8, 7), (9,)]"""
     global automat
     global cycles
     path = []
@@ -169,43 +105,6 @@ def find_path(use_cycles):
                 if path[-1] != last_node_number and i == 0:
                     path.append(last_node_number)
     return path
-
-#
-# def pattern_using_cycles(step_number, lenght_pattern, base):
-#     hex_num = str(convert_base(step_number, base))
-#     pattern = []
-#     for i in range(lenght_pattern - len(hex_num)):
-#         pattern.append(0)
-#     for j in range(len(hex_num)):
-#         pattern.append(int(hex_num[j]))
-#     return pattern
-
-
-# def find_path(use_cycles, pattern):
-#     """pattern в двоичном виде для одного шага
-#     use_cycles: [0, 2, ...], где element - количество пробегов по циклу
-#     cycles1 = [(0,), (3, 2, 1), (4, 3, 2), (5, 4), (6, 5), (8, 7, 6), (9, 8, 7), (9,)]"""
-#     global automat
-#     global cycles
-#     path = []
-#     using = []
-#     for j in range(len(pattern)):
-#         using.append(int(pattern[j]) + use_cycles[j])
-#     for last_node_number in range(len(automat) - 1, -1, -1):
-#         for i in range(len(using) - 1, -1, -1):
-#             '''добавление цикла'''
-#             if cycles[0][i][0] == last_node_number and using[i] > 0:
-#                 for c in range(using[i]):
-#                     for node in cycles[0][i]:
-#                         path.append(node)
-#                 path.append(last_node_number)
-#
-#             if len(path) == 0:
-#                 path.append(last_node_number)
-#             else:
-#                 if path[-1] != last_node_number and i == 0:
-#                     path.append(last_node_number)
-#     return path
 
 
 def check(alist_words):
