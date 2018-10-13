@@ -148,35 +148,41 @@ def make_list_using_cycles(len_use_list, len_p):
     result = []
     zero_array = []
     decomp_number = 1
-    while True:
-        for i in range(decomp_number):
-            zero_array.append(0)
-        dec(zero_array, decomp_number, decomp_number, 0, result)
+    # while True:
+    for p in range(len_p):
         for i in range(decomp_number):
             zero_array.append(0)
         dec(zero_array, decomp_number, decomp_number, 0, result)
         for sublist in result:
-            appended = False
-            possible_using_cycle = []
-            for num in sublist:
-                possible_using_cycle.append(num)
-            for i in range(len_use_list - len(possible_using_cycle)):
-                possible_using_cycle.append(0)
-            variants = [[x for x in itertools.permutations(possible_using_cycle)]]
-            variants = list(set(variants[0]))
-            for variant in variants:
-                way_len = 0
-                for j in range(len(variant)):
-                    if variant[j] == 0:
-                        way_len += 1
-                    else:
-                        way_len += cyclesconf[0][j]
-                if way_len == len_p:
-                    appended = True
-                    list_using_cycles.append(variant)
-            if sublist == result[-1] and not appended:
-                return list_using_cycles
+            # less = 0
+            # appended = False
+
+            if len(sublist) <= len_use_list:
+
+                possible_using_cycle = []
+                for num in sublist:
+                    possible_using_cycle.append(num)
+                for i in range(len_use_list - len(possible_using_cycle)):
+                    possible_using_cycle.append(0)
+                variants = [[x for x in itertools.permutations(possible_using_cycle)]]
+                variants = list(set(variants[0]))
+                for variant in variants:
+                    way_len = 0
+                    for j in range(len(variant)):
+                        if variant[j] == 0:
+                            way_len += 1
+                        else:
+                            way_len += cyclesconf[0][j] + 1
+                    if way_len == len_p:
+                        # appended = True
+                        list_using_cycles.append(variant)
+                    # if way_len < len_p:
+                    #     less += 1
+                # if sublist == result[-1] and not appended:
+                # if less == 0:
+                #     return list_using_cycles
         decomp_number += 1
+    return list_using_cycles
 
 
 def get_word():
@@ -184,13 +190,10 @@ def get_word():
     global cycles
     with open("k3result.txt", 'w') as file:
         max_length_word = (len(automat) - 1) ** 2
-        step = 0
         len_possible_path = 4
         while True:
             len_possible_path += 1
             list_using_cycles = make_list_using_cycles(len(cycles[0]), len_possible_path)
-            if not list_using_cycles:
-                continue
             pathes = []
             for us_cycles in list_using_cycles:
                 pathes.append(find_path(us_cycles))
